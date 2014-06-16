@@ -8,3 +8,7 @@ use of an extension, who knows!
 
 Early days yet, it will play 'Another one bites the dust' using the ASCII bell
 at the moment (fun).
+
+To launch the experiments so far, simply execute:
+
+    php run.php
