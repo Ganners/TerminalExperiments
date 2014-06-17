@@ -19,6 +19,84 @@ class TerminalExperiments {
     }
 
     /**
+     * This function will print a spinning halo in the terminal. The idea here
+     * is to test:
+     *
+     *  - Retrieving dimensions of a terminal
+     *  - Clearing the page
+     *  - Positioning the cursor at various positions and printing
+     *  - General fps we can achieve (pretty good!)
+     *
+     * Creates an infinite loop, C c to quit
+     */
+    public function executeFullScreenAnimation() {
+
+        // FPS (microsends)
+        $fps = 50000;
+        $speed = 0.2;
+
+        // What to print in the middle
+        $wordToPrint = '“Halo, it’s over.” - Cortana';
+
+        // Get the dimensions of the terminal and calculate center points
+        $dimensions = $this->_terminalActions->getDimensions();
+        $midX = floor($dimensions->columns / 2);
+        $midY = floor($dimensions->lines / 2);
+
+        if(!$dimensions) {
+            throw new Exception('Not able to get dimensions');
+        }
+
+        // Maximum radius is the minimum line or column minus some padding
+        $maxRadius = floor(min($dimensions->lines, $dimensions->columns)) - 6;
+        $minRadius = 15; // Minimum radius to go to
+
+        $radiusStep = 2; // Radius step per frame
+        $step = 2 * (pi() / 60); // Step to increase theta
+
+        $direction = 1; // Direction (1 or -1)
+        $frames = 0; // Current frame number
+
+        // Each frame
+        for($i = $minRadius; ;$i += $direction) {
+            $this->_terminalActions->clearScreen();
+
+            $radius = ($i * $speed + $radiusStep) % $maxRadius;
+
+            if($direction < 0 && $radius <= $minRadius) {
+                $direction = abs($direction);
+            } else if ($direction > 0 && $radius >= $maxRadius - $radiusStep) {
+                $direction = $direction * -1;
+            }
+
+            // Build something interesting...
+            for($theta = 0; $theta < 2 * pi(); $theta += $step) {
+
+                // Draw a bunch of circles with alternating radiuses (I.e.
+                // circles within circles)
+                for($circleI = 0; $circleI < 5; ++$circleI) {
+
+                    $y = ceil($midY - (0.6 * $radius - $circleI) *
+                         sin($theta + $frames / 80));
+                    $x = ceil($midX + ($radius - $circleI) *
+                         cos($theta + $frames / 10));
+
+                    $this->_terminalActions->positionCursor($y, $x);
+                    echo 'X';
+                }
+            }
+
+            // Print something in the center
+            $this->_terminalActions->positionCursor(
+                $midY, ($midX - ceil(strlen($wordToPrint) / 2)));
+            echo $wordToPrint;
+
+            ++$frames;
+            usleep($fps);
+        }
+    }
+
+    /**
      * Plays the syllables to 'Another one bites the dust'. It's the first song
      * that came into my head for this experiment!
      */
