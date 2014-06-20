@@ -19,9 +19,9 @@ class TerminalExperiments {
     }
 
     /**
-     * An experiment to make a little RPG perhaps in the terminal?
+     * An experiment to show what can be done with the keyboard listener..
      */
-    public function executeMouseClickDemo() {
+    public function executeKeyboardDemo() {
 
         // Get our terminal dimensions
         $dimensions = $this->_terminalActions->getDimensions();
@@ -30,53 +30,95 @@ class TerminalExperiments {
             throw new Exception('Not able to get dimensions');
         }
 
+        // Our poses and animations and stuff...
         $character['idle'] =
-            '  O  ' . PHP_EOL .
-            '--|--' . PHP_EOL .
-            '  |  ' . PHP_EOL .
-            ' / \ ' . PHP_EOL .
-            '/   \ ';
+            " .---. " . PHP_EOL .
+            "/     \ ". PHP_EOL .
+            "|(\ /)|" . PHP_EOL .
+            "(_ o _)" . PHP_EOL .
+            " |===| " . PHP_EOL .
+            " '-.-' " . PHP_EOL .
+            " --|-- " . PHP_EOL .
+            "   |   " . PHP_EOL .
+            "  / \  " . PHP_EOL .
+            " /   \ ";
+
         $character['left'][] =
-            '  O  ' . PHP_EOL .
-            '--|  ' . PHP_EOL .
-            '  |  ' . PHP_EOL .
-            '  /  ' . PHP_EOL .
-            '\/   ';
+            "  .---.  " . PHP_EOL .
+            "/ _/   ' ". PHP_EOL .
+            "' )     |" . PHP_EOL .
+            "|_  )  / " . PHP_EOL .
+            "|== |  | " . PHP_EOL .
+            " \___./  " . PHP_EOL .
+            " --|     " . PHP_EOL .
+            "   |     " . PHP_EOL .
+            "   /     " . PHP_EOL .
+            " \/      ";
+
         $character['left'][] =
-            '  O  ' . PHP_EOL .
-            '  |  ' . PHP_EOL .
-            ' /|  ' . PHP_EOL .
-            '  /  ' . PHP_EOL .
-            ' _\  ';
+            "  .---.  " . PHP_EOL .
+            "/ _/   ' ". PHP_EOL .
+            "' )     |" . PHP_EOL .
+            "|_  )  / " . PHP_EOL .
+            "|== |  | " . PHP_EOL .
+            " \___./  " . PHP_EOL .
+            "   |     " . PHP_EOL .
+            "  /|     " . PHP_EOL .
+            "   /     " . PHP_EOL .
+            "  _\     ";
+
         $character['right'][] =
-            '  O  ' . PHP_EOL .
-            '  |--' . PHP_EOL .
-            '  |  ' . PHP_EOL .
-            '  \  ' . PHP_EOL .
-            '   \/';
+            " .---. " . PHP_EOL .
+            "'   \_ \ ". PHP_EOL .
+            "|     ( '" . PHP_EOL .
+            " \  (  _|" . PHP_EOL .
+            " |  | ==|" . PHP_EOL .
+            "  \.___/ " . PHP_EOL .
+            "   |--   " . PHP_EOL .
+            "   |     " . PHP_EOL .
+            "   \     " . PHP_EOL .
+            "    \/   ";
+
         $character['right'][] =
-            '  O  ' . PHP_EOL .
-            '  |  ' . PHP_EOL .
-            '  |\ ' . PHP_EOL .
-            '  \  ' . PHP_EOL .
-            '  /_ ';
+            " .---. " . PHP_EOL .
+            "'   \_ \ ". PHP_EOL .
+            "|     ( '" . PHP_EOL .
+            " \  (  _|" . PHP_EOL .
+            " |  | ==|" . PHP_EOL .
+            "  \.___/ " . PHP_EOL .
+            "   |     " . PHP_EOL .
+            "   |\    " . PHP_EOL .
+            "   \     " . PHP_EOL .
+            "   /_    ";
+
         $character['jump'] =
-            '  O  ' . PHP_EOL .
-            ' /|\ ' . PHP_EOL .
-            ' /\'\ '. PHP_EOL .
-            ' \ / ' . PHP_EOL .
-            '     ';
+            " .---. " . PHP_EOL .
+            "/     \ ". PHP_EOL .
+            "|(\ /)|" . PHP_EOL .
+            "(_ o _)" . PHP_EOL .
+            " |===| " . PHP_EOL .
+            " '-.-' " . PHP_EOL .
+            "  /|\  " . PHP_EOL .
+            "  /'\  " . PHP_EOL .
+            "  \ /  " . PHP_EOL .
+            "     ";
+
         $character['crouch'] =
-            '     ' . PHP_EOL . 
-            '  O  ' . PHP_EOL .
-            '--|--' . PHP_EOL .
-            ' /\'\ '. PHP_EOL .
-            ' \ / ';
+            "       " . PHP_EOL . 
+            " .---. " . PHP_EOL .
+            "/     \ ". PHP_EOL .
+            "|(\ /)|" . PHP_EOL .
+            "(_ o _)" . PHP_EOL .
+            " |===| " . PHP_EOL .
+            " '-.-' " . PHP_EOL .
+            " --|-- " . PHP_EOL .
+            "  /'\  " . PHP_EOL .
+            "  \ /  ";
 
         // Defaults
         $pose = 'idle';
-        $characterHeight = 5;
-        $characterWidth = 5;
+        $characterHeight = 10;
+        $characterWidth = 8;
 
         // Calculate our starting position
         $position = (object) array(
@@ -96,10 +138,10 @@ class TerminalExperiments {
 
             switch($key) {
                 case 'arrow_up':
-                    $position->line -= 1;
+                    $position->line -= 4;
                     $this->_printPose($character['jump'], $position);
                     $this->_printGround($dimensions);
-                    $position->line += 1;
+                    $position->line += 4;
                     $this->_printPose($character['idle'], $position, 200000);
                     $this->_printGround($dimensions);
                     break;
@@ -110,14 +152,14 @@ class TerminalExperiments {
                     $this->_printGround($dimensions);
                     break;
                 case 'arrow_left':
-                    $position->column -= 1;
+                    $position->column -= 2;
                     foreach($character['left'] as $cycle => $pose) {
                         $this->_printPose($pose, $position, 100000);
                         $this->_printGround($dimensions);
                     }
                     break;
                 case 'arrow_right':
-                    $position->column += 1;
+                    $position->column += 2;
                     foreach($character['right'] as $cycle => $pose) {
                         $this->_printPose($pose, $position, 100000);
                         $this->_printGround($dimensions);
@@ -128,36 +170,44 @@ class TerminalExperiments {
 
         });
     }
-    protected function _printGround($dimensions) {
 
-        // Print ground
-        $this->_terminalActions->positionCursor(
-            $dimensions->lines, 0);
+        /**
+        * Prints the ground for executeKeyboardDemo
+        */
+        protected function _printGround($dimensions) {
 
-        // Change colour to green
-        echo $this->_terminalActions->getColoredString(
-            str_repeat('‾', $dimensions->columns), 'green', 'green');
-    }
-    protected function _printPose($pose, $position, $delay = 0) {
-
-        if($delay > 0) {
-            usleep($delay);
-        }
-
-        // Clear the canvas
-        $this->_terminalActions->clearScreen();
-
-        foreach(explode(PHP_EOL, $pose) as $i => $line) {
-
-            // Split up (so we can keep maintain the column)
+            // Print ground
             $this->_terminalActions->positionCursor(
-                $position->line + $i, $position->column);
+                $dimensions->lines, 0);
 
-            // Print out the individual line
+            // Change colour to green
             echo $this->_terminalActions->getColoredString(
-                $line, 'purple');
+                str_repeat('‾', $dimensions->columns), 'green', 'green');
         }
-    }
+
+        /**
+        * Prints a character pose for executeKeyboardDemo
+        */
+        protected function _printPose($pose, $position, $delay = 0) {
+
+            if($delay > 0) {
+                usleep($delay);
+            }
+
+            // Clear the canvas
+            $this->_terminalActions->clearScreen();
+
+            foreach(explode(PHP_EOL, $pose) as $i => $line) {
+
+                // Split up (so we can keep maintain the column)
+                $this->_terminalActions->positionCursor(
+                    $position->line + $i, $position->column);
+
+                // Print out the individual line
+                echo $this->_terminalActions->getColoredString(
+                    $line, 'purple');
+            }
+        }
 
     /**
      * This function will print a spinning halo in the terminal. The idea here

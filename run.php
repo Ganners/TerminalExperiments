@@ -11,5 +11,5 @@ $terminalExperiments = new TerminalExperiments(new TerminalActions);
 // Test drawing on the whole screen, little Halo demo here :-)
 // $terminalExperiments->executeFullScreenAnimation();
 
-// Do some mouse stuff on click
-$terminalExperiments->executeMouseClickDemo();
+// A demo to test some keyboard listeners
+$terminalExperiments->executeKeyboardDemo();
