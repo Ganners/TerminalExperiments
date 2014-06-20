@@ -44,8 +44,8 @@ class TerminalExperiments {
             '\/   ';
         $character['left'][] =
             '  O  ' . PHP_EOL .
-            '--|  ' . PHP_EOL .
             '  |  ' . PHP_EOL .
+            ' /|  ' . PHP_EOL .
             '  /  ' . PHP_EOL .
             ' _\  ';
         $character['right'][] =
@@ -56,8 +56,8 @@ class TerminalExperiments {
             '   \/';
         $character['right'][] =
             '  O  ' . PHP_EOL .
-            '  |--' . PHP_EOL .
             '  |  ' . PHP_EOL .
+            '  |\ ' . PHP_EOL .
             '  \  ' . PHP_EOL .
             '  /_ ';
         $character['jump'] =
@@ -98,28 +98,33 @@ class TerminalExperiments {
                 case 'arrow_up':
                     $position->line -= 1;
                     $this->_printPose($character['jump'], $position);
+                    $this->_printGround($dimensions);
                     $position->line += 1;
                     $this->_printPose($character['idle'], $position, 200000);
+                    $this->_printGround($dimensions);
                     break;
                 case 'arrow_down':
                     $this->_printPose($character['crouch'], $position);
+                    $this->_printGround($dimensions);
                     $this->_printPose($character['idle'], $position, 200000);
+                    $this->_printGround($dimensions);
                     break;
                 case 'arrow_left':
                     $position->column -= 1;
                     foreach($character['left'] as $cycle => $pose) {
                         $this->_printPose($pose, $position, 100000);
+                        $this->_printGround($dimensions);
                     }
                     break;
                 case 'arrow_right':
                     $position->column += 1;
                     foreach($character['right'] as $cycle => $pose) {
                         $this->_printPose($pose, $position, 100000);
+                        $this->_printGround($dimensions);
                     }
                     break;
             }
 
-            $this->_printGround($dimensions);
 
         });
     }
@@ -128,9 +133,10 @@ class TerminalExperiments {
         // Print ground
         $this->_terminalActions->positionCursor(
             $dimensions->lines, 0);
-        for($i = 1; $i < $dimensions->columns; ++$i) {
-            echo '‾';
-        }
+
+        // Change colour to green
+        echo $this->_terminalActions->getColoredString(
+            str_repeat('‾', $dimensions->columns), 'green', 'green');
     }
     protected function _printPose($pose, $position, $delay = 0) {
 
@@ -148,7 +154,8 @@ class TerminalExperiments {
                 $position->line + $i, $position->column);
 
             // Print out the individual line
-            echo $line;
+            echo $this->_terminalActions->getColoredString(
+                $line, 'purple');
         }
     }
 

@@ -240,5 +240,65 @@ class TerminalActions {
         echo "\033[2J";
         return $this;
     }
+
+    /**
+     * Returns a printable colored string out, convenient!
+     *
+     * http://www.if-not-true-then-false.com/2010/php-class-for-coloring-php\
+     *      -command-line-cli-scripts-output-php-output-colorizing-using-bash\
+     *      -shell-colors/
+     *
+     * @param string $string  - The string we want to print
+     * @param string $fgColor - The color for the foreground
+     * @param string $bgColor - The color for the background
+     *
+     * @return string
+     */
+    public function getColoredString(
+        $string, $fgColor = NULL, $bgColor = NULL) {
+
+        $coloredString = '';
+
+        $fgColors['black'] = '0;30';
+        $fgColors['dark_gray'] = '1;30';
+        $fgColors['blue'] = '0;34';
+        $fgColors['light_blue'] = '1;34';
+        $fgColors['green'] = '0;32';
+        $fgColors['light_green'] = '1;32';
+        $fgColors['cyan'] = '0;36';
+        $fgColors['light_cyan'] = '1;36';
+        $fgColors['red'] = '0;31';
+        $fgColors['light_red'] = '1;31';
+        $fgColors['purple'] = '0;35';
+        $fgColors['light_purple'] = '1;35';
+        $fgColors['brown'] = '0;33';
+        $fgColors['yellow'] = '1;33';
+        $fgColors['light_gray'] = '0;37';
+        $fgColors['white'] = '1;37';
+
+        $bgColors['black'] = '40';
+        $bgColors['red'] = '41';
+        $bgColors['green'] = '42';
+        $bgColors['yellow'] = '43';
+        $bgColors['blue'] = '44';
+        $bgColors['magenta'] = '45';
+        $bgColors['cyan'] = '46';
+        $bgColors['light_gray'] = '47';
+
+        // Check if given foreground color found
+        if (isset($fgColors[$fgColor])) {
+            $coloredString .= "\033[" . $fgColors[$fgColor] . "m";
+        }
+
+        // Check if given background color found
+        if (isset($bgColors[$bgColor])) {
+            $coloredString .= "\033[" . $bgColors[$bgColor] . "m";
+        }
+
+        // Add string and end coloring
+        $coloredString .=  $string . "\033[0m";
+
+        return $coloredString;
+    }
 }
 
