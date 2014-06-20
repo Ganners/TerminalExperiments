@@ -9,4 +9,7 @@ $terminalExperiments = new TerminalExperiments(new TerminalActions);
 // $terminalExperiments->executeBellExperiment();
 
 // Test drawing on the whole screen, little Halo demo here :-)
-$terminalExperiments->executeFullScreenAnimation();
+// $terminalExperiments->executeFullScreenAnimation();
+
+// Do some mouse stuff on click
+$terminalExperiments->executeMouseClickDemo();

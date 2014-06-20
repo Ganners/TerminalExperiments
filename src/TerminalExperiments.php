@@ -19,6 +19,16 @@ class TerminalExperiments {
     }
 
     /**
+     * An experiment to make a little RPG perhaps in the terminal?
+     */
+    public function executeMouseClickDemo() {
+
+        $this->_terminalActions->keyboardListener(function($key, $keycode) {
+
+        });
+    }
+
+    /**
      * This function will print a spinning halo in the terminal. The idea here
      * is to test:
      *
