@@ -23,9 +23,133 @@ class TerminalExperiments {
      */
     public function executeMouseClickDemo() {
 
-        $this->_terminalActions->keyboardListener(function($key, $keycode) {
+        // Get our terminal dimensions
+        $dimensions = $this->_terminalActions->getDimensions();
+
+        if(!$dimensions) {
+            throw new Exception('Not able to get dimensions');
+        }
+
+        $character['idle'] =
+            '  O  ' . PHP_EOL .
+            '--|--' . PHP_EOL .
+            '  |  ' . PHP_EOL .
+            ' / \ ' . PHP_EOL .
+            '/   \ ';
+        $character['left'][] =
+            '  O  ' . PHP_EOL .
+            '--|  ' . PHP_EOL .
+            '  |  ' . PHP_EOL .
+            '  /  ' . PHP_EOL .
+            '\/   ';
+        $character['left'][] =
+            '  O  ' . PHP_EOL .
+            '--|  ' . PHP_EOL .
+            '  |  ' . PHP_EOL .
+            '  /  ' . PHP_EOL .
+            ' _\  ';
+        $character['right'][] =
+            '  O  ' . PHP_EOL .
+            '  |--' . PHP_EOL .
+            '  |  ' . PHP_EOL .
+            '  \  ' . PHP_EOL .
+            '   \/';
+        $character['right'][] =
+            '  O  ' . PHP_EOL .
+            '  |--' . PHP_EOL .
+            '  |  ' . PHP_EOL .
+            '  \  ' . PHP_EOL .
+            '  /_ ';
+        $character['jump'] =
+            '  O  ' . PHP_EOL .
+            ' /|\ ' . PHP_EOL .
+            ' /\'\ '. PHP_EOL .
+            ' \ / ' . PHP_EOL .
+            '     ';
+        $character['crouch'] =
+            '     ' . PHP_EOL . 
+            '  O  ' . PHP_EOL .
+            '--|--' . PHP_EOL .
+            ' /\'\ '. PHP_EOL .
+            ' \ / ';
+
+        // Defaults
+        $pose = 'idle';
+        $characterHeight = 5;
+        $characterWidth = 5;
+
+        // Calculate our starting position
+        $position = (object) array(
+            'line' => $dimensions->lines - $characterHeight,
+            'column' => floor($dimensions->columns / 2) - floor($characterWidth / 2)
+        );
+
+        // Clear screen before anything...
+        $this->_terminalActions->clearScreen();
+        $this->_printPose($character['idle'], $position);
+        $this->_printGround($dimensions);
+
+        // The magic, start a keyboard listener and use it to handle stuff!
+        $this->_terminalActions->keyboardListener(
+            function($key, $keycode)
+            use($character, $pose, $characterHeight, $position, $dimensions) {
+
+            switch($key) {
+                case 'arrow_up':
+                    $position->line -= 1;
+                    $this->_printPose($character['jump'], $position);
+                    $position->line += 1;
+                    $this->_printPose($character['idle'], $position, 200000);
+                    break;
+                case 'arrow_down':
+                    $this->_printPose($character['crouch'], $position);
+                    $this->_printPose($character['idle'], $position, 200000);
+                    break;
+                case 'arrow_left':
+                    $position->column -= 1;
+                    foreach($character['left'] as $cycle => $pose) {
+                        $this->_printPose($pose, $position, 100000);
+                    }
+                    break;
+                case 'arrow_right':
+                    $position->column += 1;
+                    foreach($character['right'] as $cycle => $pose) {
+                        $this->_printPose($pose, $position, 100000);
+                    }
+                    break;
+            }
+
+            $this->_printGround($dimensions);
 
         });
+    }
+    protected function _printGround($dimensions) {
+
+        // Print ground
+        $this->_terminalActions->positionCursor(
+            $dimensions->lines, 0);
+        for($i = 1; $i < $dimensions->columns; ++$i) {
+            echo '‾';
+        }
+    }
+    protected function _printPose($pose, $position, $delay = 0) {
+
+        if($delay > 0) {
+            usleep($delay);
+        }
+
+        // Clear the canvas
+        $this->_terminalActions->clearScreen();
+
+        foreach(explode(PHP_EOL, $pose) as $i => $line) {
+
+            // Split up (so we can keep maintain the column)
+            $this->_terminalActions->positionCursor(
+                $position->line + $i, $position->column);
+
+            // Print out the individual line
+            echo $line;
+        }
     }
 
     /**
